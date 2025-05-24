@@ -1,0 +1,7 @@
+flask
+gunicorn
+python-dotenv
+pydantic
+google-generativeai
+jinja2
+starlette
