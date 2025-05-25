@@ -6,6 +6,179 @@
     <title>Quizly.com</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.5rem 1rem;
+                position: relative;
+                background: #181028;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                width: auto;
+                flex: 1 1 auto;
+            }
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+                margin-right: 0.5em;
+            }
+            .logo span {
+                font-size: 1.35em;
+                font-weight: 700;
+                color: #fff;
+                letter-spacing: 0.01em;
+                line-height: 1;
+                margin-right: 0.5em;
+            }
+            .hamburger {
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 40px;
+                height: 40px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                margin-left: 0.5rem;
+                z-index: 102;
+            }
+            .hamburger span {
+                display: block;
+                height: 4px;
+                width: 28px;
+                margin: 3px 0;
+                background: #fff;
+                border-radius: 2px;
+                transition: 0.3s;
+            }
+            .nav {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100vw;
+                background: #181028;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 101;
+                box-shadow: 0 4px 16px rgba(139,92,246,0.08);
+                padding: 2rem 0 2rem 0;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                text-align: center;
+            }
+            .nav.open {
+                display: flex;
+            }
+            .nav .nav-link {
+                font-size: 1.25em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                margin-bottom: 0.3em;
+                display: block;
+            }
+            .nav .avatar-row {
+                display: flex;
+                justify-content: center;
+                gap: 1.5em;
+                margin: 1em 0 1.5em 0;
+            }
+            .nav .avatar-link img {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                border: 2px solid #8b5cf6;
+                background: #222;
+            }
+            .nav .nav-btn {
+                display: block;
+                width: 90%;
+                margin: 0.7em auto;
+                padding: 0.9em 0;
+                background: transparent;
+                color: #f472b6;
+                border: 1.5px solid #f472b6;
+                border-radius: 10px;
+                font-size: 1.15em;
+                font-weight: 600;
+                transition: background 0.2s, color 0.2s;
+                text-align: center;
+                text-decoration: none;
+            }
+            .nav .nav-btn:hover {
+                background: #f472b6;
+                color: #181028;
+            }
+            .actions {
+                display: none;
+            }
+        }
+        @media (min-width: 701px) {
+            .hamburger {
+                display: none;
+            }
+            .nav {
+                display: flex !important;
+                flex-direction: row;
+                align-items: center;
+                position: static;
+                background: none;
+                box-shadow: none;
+                padding: 0;
+                width: auto;
+                border-radius: 0;
+                text-align: left;
+                gap: 1.5em;
+            }
+            .nav .nav-link {
+                font-size: 1em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 600;
+                margin: 0 0.7em 0 0;
+                display: inline-block;
+            }
+            .nav .avatar-row {
+                display: flex;
+                gap: 0.7em;
+                margin: 0 0.7em;
+            }
+            .nav .avatar-link img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 2px solid #8b5cf6;
+                background: #222;
+            }
+            .nav .nav-btn {
+                display: inline-block;
+                width: auto;
+                margin: 0 0.5em;
+                padding: 0.5em 1.2em;
+                background: transparent;
+                color: #f472b6;
+                border: 1.5px solid #f472b6;
+                border-radius: 10px;
+                font-size: 1em;
+                font-weight: 600;
+                transition: background 0.2s, color 0.2s;
+                text-align: center;
+                text-decoration: none;
+            }
+            .nav .nav-btn:hover {
+                background: #f472b6;
+                color: #181028;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -13,50 +186,24 @@
             <img src="/static/logo-3.png" alt="Quizly Logo" class="logo-icon">
             <span>Quizly.com</span>
         </div>
-        <nav class="nav">
-            <a href="https://github.com/abhirajadhikary06/quizly/blob/main/README.md">Readme.md</a>
-            <a href="https://chat.whatsapp.com/JbALaLcvsHI1d5yo3k5D3N">Join Us</a>
-            <style>
-                .avatar-link {
-                    position: relative;
-                    display: inline-block;
-                    margin-left: 0.5rem;
-                }
-                .avatar-link .avatar-tooltip {
-                    visibility: hidden;
-                    opacity: 0;
-                    width: max-content;
-                    background: #fff;
-                    color: #4b5563;
-                    text-align: center;
-                    border-radius: 8px;
-                    padding: 0.4em 1em;
-                    position: absolute;
-                    z-index: 10;
-                    bottom: -45px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    box-shadow: 0 4px 16px rgba(139,92,246,0.15);
-                    font-size: 0.95em;
-                    font-weight: 500;
-                    border: 1px solid #e5e7eb;
-                    transition: opacity 0.2s, visibility 0.2s;
-                    pointer-events: none;
-                }
-                .avatar-link:hover .avatar-tooltip,
-                .avatar-link:focus .avatar-tooltip {
-                    visibility: visible;
-                    opacity: 1;
-                }
-            </style>
-            <a href="/profile/abhirajadhikary06" class="avatar-link">
-                <img src="/static/avatar1.png" alt="abhirajadhikary06" style="width:32px; height:32px; border-radius:50%; border:2px solid #8b5cf6;">
-                <span class="avatar-tooltip">abhirajadhikary06</span>
-            </a>
-            <a href="/profile/anikchand461" class="avatar-link">
-                <img src="/static/avatar2.jpg" alt="anikchand461" style="width:32px; height:32px; border-radius:50%; border:2px solid #8b5cf6;">
-                <span class="avatar-tooltip">anikchand461</span>
-            </a>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav class="nav" id="main-nav">
+            <a href="https://github.com/abhirajadhikary06/quizly/blob/main/README.md" class="nav-link">Readme.md</a>
+            <a href="https://chat.whatsapp.com/JbALaLcvsHI1d5yo3k5D3N" class="nav-link">Join Us</a>
+            <div class="avatar-row">
+                <a href="/profile/abhirajadhikary06" class="avatar-link">
+                    <img src="/static/avatar1.png" alt="abhirajadhikary06">
+                </a>
+                <a href="/profile/anikchand461" class="avatar-link">
+                    <img src="/static/avatar2.jpg" alt="anikchand461">
+                </a>
+            </div>
+            <a href="https://github.com/abhirajadhikary06/quizly" class="nav-btn">GitHub</a>
+            <a href="https://open-launch.com/projects/quizly" class="nav-btn">Open Launch</a>
         </nav>
         <div class="actions">
             <a href="https://github.com/abhirajadhikary06/quizly" class="btn btn-outline" style="transition: color 0.2s; color: #8b5cf6;">
@@ -220,6 +367,18 @@
         {% if error %}
             showFeedback("{{ error }}", false);
         {% endif %}
+    </script>
+    <script>
+        const hamburger = document.getElementById('hamburger-btn');
+        const nav = document.getElementById('main-nav');
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('open');
+        });
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 700) nav.classList.remove('open');
+            });
+        });
     </script>
 </body>
 </html>
