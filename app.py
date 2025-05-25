@@ -10,6 +10,8 @@ import google.generativeai as genai
 from starlette.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 import asyncio
+from itsdangerous import URLSafeSerializer
+from fastapi import Cookie, Response
 
 # Load Gemini API key from .env
 load_dotenv()
@@ -24,13 +26,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Templates directory
 templates = Jinja2Templates(directory="templates")
 
-# Store quiz state in memory (not suitable for production)
-quiz_state = {
-    "questions": [],
-    "correct_answers": [],
-    "current_index": 0,
-    "score": 0
-}
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
+serializer = URLSafeSerializer(SECRET_KEY)
 
 # --------------- Pydantic models for internal use ---------------
 class Question(BaseModel):
@@ -79,15 +76,50 @@ def parse_questions(text: str):
             })
     return mcqs
 
+def get_quiz_state(cookie: str = None):
+    if cookie:
+        try:
+            return serializer.loads(cookie)
+        except Exception:
+            pass
+    return {
+        "questions": [],
+        "correct_answers": [],
+        "current_index": 0,
+        "score": 0
+    }
+
+def set_quiz_state(response: Response, state: dict):
+    cookie_val = serializer.dumps(state)
+    response.set_cookie("quiz_state", cookie_val, httponly=True, max_age=3600)
+
 # --------------- Routes ---------------
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    quiz_state = get_quiz_state(request.cookies.get("quiz_state"))
     # Reset quiz state if action=reset
     if request.query_params.get("action") == "reset":
-        quiz_state["questions"] = []
-        quiz_state["correct_answers"] = []
-        quiz_state["current_index"] = 0
-        quiz_state["score"] = 0
+        quiz_state = {
+            "questions": [],
+            "correct_answers": [],
+            "current_index": 0,
+            "score": 0
+        }
+        response = templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "questions": [],
+                "current_index": 0,
+                "score": 0,
+                "topics": "",
+                "num_questions": 5,
+                "error": None
+            }
+        )
+        set_quiz_state(response, quiz_state)
+        return response
+
     return templates.TemplateResponse(
         "index.html",
         {
@@ -135,24 +167,28 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                 }
             )
 
-        # Update quiz state (still global/in-memory)
-        quiz_state["questions"] = questions
-        quiz_state["correct_answers"] = [q["correct_answer"] for q in questions]
-        quiz_state["current_index"] = 0
-        quiz_state["score"] = 0
+        quiz_state = {
+            "questions": questions,
+            "correct_answers": [q["correct_answer"] for q in questions],
+            "current_index": 0,
+            "score": 0
+        }
 
-        return templates.TemplateResponse(
+        response = templates.TemplateResponse(
             "index.html",
             {
                 "request": request,
-                "questions": quiz_state["questions"],
-                "current_index": quiz_state["current_index"],
-                "score": quiz_state["score"],
+                "questions": questions,
+                "current_index": 0,
+                "score": 0,
                 "topics": topics,
                 "num_questions": num_questions,
                 "error": None
             }
         )
+        set_quiz_state(response, quiz_state)
+
+        return response
     except Exception as e:
         return templates.TemplateResponse(
             "index.html",
@@ -168,9 +204,10 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
         )
 
 @app.post("/submit_answer", response_class=JSONResponse)
-async def submit_answer(answer: str = Form(...)):
+async def submit_answer(request: Request, answer: str = Form(...)):
+    quiz_state = get_quiz_state(request.cookies.get("quiz_state"))
     if not quiz_state["questions"] or quiz_state["current_index"] >= len(quiz_state["questions"]):
-        return {"error": "No active quiz or quiz completed"}
+        return JSONResponse({"error": "No active quiz or quiz completed"})
 
     current_question = quiz_state["questions"][quiz_state["current_index"]]
     is_correct = answer == current_question["correct_answer"]
@@ -178,9 +215,11 @@ async def submit_answer(answer: str = Form(...)):
         quiz_state["score"] += 1
     quiz_state["current_index"] += 1
 
-    return {
+    response = JSONResponse({
         "is_correct": is_correct,
         "correct_answer": current_question["correct_answer"],
         "score": quiz_state["score"],
         "current_index": quiz_state["current_index"]
-    }
+    })
+    set_quiz_state(response, quiz_state)
+    return response
