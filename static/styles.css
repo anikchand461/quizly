@@ -268,41 +268,12 @@ body {
     border-radius: 8px;
 }
 
-@media (max-width: 768px) {
-    .header {
-        padding: 1rem;
-    }
-
-    .nav {
-        display: none;
-    }
-
-    .hero-title {
-        font-size: 3rem;
-    }
-
-    .form-container {
-        margin: 0 1rem;
-        padding: 2rem;
-    }
-
-    .quiz-container {
-        margin: 0 1rem;
-    }
-}
-
-/* Custom radio button styles for quiz options */
+/* Custom radio button styles */
 .options .option {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
-    padding-left: 2em;
-    margin-bottom: 1em;
-    background: none;
-    border: none;
-    transition: background 0.2s;
+    padding-left: 2.5em;
+    margin-bottom: 0.75em;
 }
 
 .options .option input[type="radio"] {
@@ -314,7 +285,6 @@ body {
 }
 
 .options .option label {
-    cursor: pointer;
     padding-left: 0;
     position: relative;
     min-height: 1.6em;
@@ -361,4 +331,191 @@ body {
 .options .option input[type="radio"]:focus + label::before {
     outline: 2px solid #a78bfa;
     outline-offset: 2px;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .nav {
+        display: none; /* Hide navigation on mobile */
+    }
+
+    .actions {
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .logo {
+        font-size: 1.25rem;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .main-content {
+        padding: 2rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+        max-width: 90%;
+    }
+
+    .form-container {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+
+    .form-input {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .quiz-container {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+
+    .question-card {
+        padding: 1.5rem;
+    }
+
+    .question-title {
+        font-size: 1.1rem;
+    }
+
+    .option {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .result h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Extra Small Screens (below 480px) */
+@media (max-width: 480px) {
+    .header {
+        padding: 0.75rem;
+    }
+
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    .logo-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .actions {
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+        max-width: 95%;
+    }
+
+    .form-container {
+        margin: 0 0.5rem;
+        padding: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-input {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-primary {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .quiz-container {
+        margin: 0 0.5rem;
+        padding: 1rem;
+    }
+
+    .question-card {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .question-title {
+        font-size: 1rem;
+    }
+
+    .options {
+        gap: 0.75rem;
+    }
+
+    .option {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .options .option {
+        padding-left: 2em;
+    }
+
+    .options .option label::before {
+        width: 1em;
+        height: 1em;
+        left: -1.8em;
+    }
+
+    .options .option label::after {
+        width: 0.5em;
+        height: 0.5em;
+        left: -1.5em;
+    }
+
+    .result {
+        padding: 1rem;
+    }
+
+    .result h3 {
+        font-size: 1.25rem;
+    }
+
+    .error {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
 }
