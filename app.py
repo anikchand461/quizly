@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from starlette.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
+import asyncio
 
 # Load Gemini API key from .env
 load_dotenv()
@@ -38,7 +39,7 @@ class Question(BaseModel):
     correct_answer: str
 
 # --------------- Gemini API & parsing ---------------
-def generate_mcqs(topics: List[str], num_questions: int):
+async def generate_mcqs(topics: List[str], num_questions: int):
     prompt = f"""Generate {num_questions} multiple choice questions (MCQs) on the topics: {', '.join(topics)}.
 Each question must have 4 options labeled a., b., c., d. and mention the correct answer clearly as 'Answer: <option letter>'.
 Format:
@@ -49,9 +50,13 @@ c. <option3>
 d. <option4>
 Answer: <a/b/c/d>
 """
-    model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
-    response = model.generate_content(prompt)
-    return parse_questions(response.text)
+    def sync_call():
+        model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
+        response = model.generate_content(prompt)
+        return response.text
+
+    response_text = await asyncio.to_thread(sync_call)
+    return parse_questions(response_text)
 
 def parse_questions(text: str):
     mcqs = []
@@ -113,9 +118,9 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
             }
         )
 
-    # Generate questions
     try:
-        questions = generate_mcqs(topic_list, num_questions)
+        # This is now async!
+        questions = await generate_mcqs(topic_list, num_questions)
         if not questions:
             return templates.TemplateResponse(
                 "index.html",
@@ -130,7 +135,7 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                 }
             )
 
-        # Update quiz state
+        # Update quiz state (still global/in-memory)
         quiz_state["questions"] = questions
         quiz_state["correct_answers"] = [q["correct_answer"] for q in questions]
         quiz_state["current_index"] = 0
