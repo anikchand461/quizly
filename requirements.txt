@@ -1,7 +1,8 @@
-flask
-gunicorn
+uvicorn
+fastapi
 python-dotenv
 pydantic
 google-generativeai
 jinja2
 starlette
+python-multipart

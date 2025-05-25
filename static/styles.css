@@ -59,6 +59,7 @@ body {
 .actions {
     display: flex;
     gap: 1rem;
+    color: #8b5cf6;
 }
 
 .btn {
