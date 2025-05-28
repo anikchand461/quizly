@@ -76,6 +76,7 @@ def parse_questions(text: str):
             })
     return mcqs
 
+# Update get_quiz_state and set_quiz_state to store user answers
 def get_quiz_state(cookie: str = None):
     if cookie:
         try:
@@ -85,6 +86,7 @@ def get_quiz_state(cookie: str = None):
     return {
         "questions": [],
         "correct_answers": [],
+        "user_answers": [],  # <-- Add this
         "current_index": 0,
         "score": 0
     }
@@ -213,6 +215,12 @@ async def submit_answer(request: Request, answer: str = Form(...)):
     is_correct = answer == current_question["correct_answer"]
     if is_correct:
         quiz_state["score"] += 1
+
+    # Store user's answer
+    if "user_answers" not in quiz_state:
+        quiz_state["user_answers"] = []
+    quiz_state["user_answers"].append(answer)
+
     quiz_state["current_index"] += 1
 
     response = JSONResponse({
@@ -223,3 +231,122 @@ async def submit_answer(request: Request, answer: str = Form(...)):
     })
     set_quiz_state(response, quiz_state)
     return response
+
+# --- New route for reviewing a specific question ---
+@app.get("/review/{question_index}", response_class=HTMLResponse)
+async def review_question(request: Request, question_index: int):
+    quiz_state = get_quiz_state(request.cookies.get("quiz_state"))
+    questions = quiz_state.get("questions", [])
+    user_answers = quiz_state.get("user_answers", [])
+    if question_index < 0 or question_index >= len(questions):
+        return HTMLResponse("Invalid question index", status_code=404)
+    question = questions[question_index]
+    user_answer = user_answers[question_index] if question_index < len(user_answers) else None
+    correct_answer = question["correct_answer"]
+
+    # Generate reason (using Gemini or static logic)
+    reason = await explain_answer(question["text"], question["options"], correct_answer, user_answer)
+
+    return templates.TemplateResponse(
+        "review.html",
+        {
+            "request": request,
+            "question": question,
+            "user_answer": user_answer,
+            "correct_answer": correct_answer,
+            "reason": reason,
+            "question_index": question_index,
+        }
+    )
+
+# --- Function to generate explanation for answer ---
+async def explain_answer(question_text, options, correct_answer, user_answer):
+    if user_answer == correct_answer:
+        return "Your answer is correct. Well done!"
+    # Use Gemini to generate a reason for the correct answer
+    prompt = f"""Question: {question_text}
+Options: {options}
+Correct Answer: {correct_answer}
+User's Answer: {user_answer}
+Explain why the correct answer is right and why the user's answer is incorrect."""
+    def sync_call():
+        model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
+        response = model.generate_content(prompt)
+        return response.text
+    try:
+        reason = await asyncio.to_thread(sync_call)
+        return reason
+    except Exception:
+        return "Could not generate explanation at this time."
+
+@app.get("/review_all", response_class=HTMLResponse)
+async def review_all(request: Request):
+    quiz_state = get_quiz_state(request.cookies.get("quiz_state"))
+    questions = quiz_state.get("questions", [])
+    user_answers = quiz_state.get("user_answers", [])
+    explanations = []
+    option_explanations = []
+
+    async def gemini_option_explanations(question):
+        prompt = f"""Question: {question['text']}
+Options: {question['options']}
+Correct Answer: {question['correct_answer']}
+For each option, explain in 1-2 sentences why it is correct or incorrect in the context of the question. Respond in JSON as:
+{{
+  "option1": "explanation1",
+  "option2": "explanation2",
+  ...
+}}
+Use the option text as the key.
+"""
+        def sync_call():
+            model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
+            response = model.generate_content(prompt)
+            return response.text
+        try:
+            result = await asyncio.to_thread(sync_call)
+            # Try to parse the JSON from Gemini's response
+            import json
+            start = result.find('{')
+            end = result.rfind('}') + 1
+            json_str = result[start:end]
+            return json.loads(json_str)
+        except Exception:
+            # fallback: generic explanations
+            return {opt: "No explanation available." for opt in question["options"]}
+
+    async def gemini_question_explanation(question, user_answer):
+        prompt = f"""Question: {question['text']}
+Options: {question['options']}
+Correct Answer: {question['correct_answer']}
+User's Answer: {user_answer}
+Explain in 2-3 sentences why the correct answer is right and why the user's answer is incorrect."""
+        def sync_call():
+            model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
+            response = model.generate_content(prompt)
+            return response.text
+        try:
+            return await asyncio.to_thread(sync_call)
+        except Exception:
+            return "Could not generate explanation at this time."
+
+    # Gather all explanations in parallel for speed
+    option_expls = await asyncio.gather(*[gemini_option_explanations(q) for q in questions])
+    question_expls = await asyncio.gather(*[
+        gemini_question_explanation(q, user_answers[idx] if idx < len(user_answers) else None)
+        for idx, q in enumerate(questions)
+    ])
+
+    option_explanations = option_expls
+    explanations = question_expls
+
+    return templates.TemplateResponse(
+        "review_all.html",
+        {
+            "request": request,
+            "questions": questions,
+            "user_answers": user_answers,
+            "explanations": explanations,
+            "option_explanations": option_explanations,
+        }
+    )

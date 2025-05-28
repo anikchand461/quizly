@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Review | Quizly</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="/static/logo-3.png" alt="Quizly Logo" class="logo-icon">
+            <span>Quizly</span>
+        </div>
+        <!-- ...nav/actions as in index.html... -->
+    </header>
+    <main class="main-content" style="max-width: 700px; margin: 2em auto;">
+        <div class="hashtag">#LearnInPublic</div>
+        <h1 class="hero-title">Quiz Review</h1>
+        <p class="hero-description">
+            See your answers, correct answers, and explanations for each question.
+        </p>
+        {% for question in questions %}
+            {% set idx = loop.index0 %}
+            <div class="question-card" style="margin-bottom:2em;">
+                <div class="question-title"><strong>Q{{ idx + 1 }}: {{ question.text }}</strong></div>
+                <ul class="options" style="margin-bottom: 0.5em;">
+                    {% for opt in question.options %}
+                    <li class="option"
+                        style="
+                            {% if opt == question.correct_answer %}
+                                color: #22c55e; border: 2px solid #22c55e; font-weight: bold;
+                            {% elif opt == user_answers[idx] %}
+                                color: #ef4444; border: 2px solid #ef4444;
+                            {% else %}
+                                color: #fff; border: 2px solid #444;
+                            {% endif %}
+                            background: rgba(255,255,255,0.02);
+                            border-radius: 8px;
+                            margin-bottom: 0.5em;
+                            padding: 0.5em 1em;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                        "
+                    >
+                        <span>
+                            <code style="background: none; color: inherit; font-weight: inherit;">{{ opt }}</code>
+                            {% if opt == question.correct_answer %}<b>(Correct)</b>{% endif %}
+                        </span>
+                        <span style="font-size:0.95em; margin-left:1em; color:#aaa;">
+                            {{ option_explanations[idx][opt] }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="answer-summary" style="background: #181028; border-radius: 8px; padding: 1em; margin-top: 1em;">
+                    <div style="margin-bottom: 0.3em;">
+                        <span style="font-weight:600;">Your answer:</span>
+                        <span style="color: #ef4444;">{{ user_answers[idx] or "No answer" }}</span>
+                    </div>
+                    <div style="margin-bottom: 0.3em;">
+                        <span style="font-weight:600;">Correct answer:</span>
+                        <span style="color: #22c55e;">{{ question.correct_answer }}</span>
+                    </div>
+                    {% if explanations[idx] and explanations[idx] != "Could not generate explanation at this time." %}
+                    <div>
+                        <span style="font-weight:600;">Explanation:</span>
+                        <span style="color: #fff;">{{ explanations[idx] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        <a href="/" class="btn-primary">Back to Home</a>
+    </main>
+</body>
+</html>
