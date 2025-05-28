@@ -157,6 +157,14 @@
                 display: none;
             }
         }
+        .option code {
+            background: #f3f4f6;
+            color: #181028;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -261,13 +269,55 @@
             if (currentIndex >= questions.length) {
                 quizContent.innerHTML = '';
                 const percentage = ((score / questions.length) * 100).toFixed(1);
+
+                // Add canvas for pie chart
+                let chartHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5em;">
+                        <canvas id="pieChart" width="180" height="180"></canvas>
+                        <div style="text-align:center; margin-top:0.5em; color:#aaa;">Correct vs Incorrect</div>
+                    </div>
+                `;
+
+                let reviewButton = `
+                    <div style="margin:1em 0;">
+                        <a href="/review_all" target="_blank" class="btn-primary" style="text-decoration:none;">
+                            Review All Questions
+                        </a>
+                    </div>
+                `;
                 resultDiv.innerHTML = `
                     <div class="result">
                         <h3>Quiz Completed!</h3>
                         <p>Score: ${score} / ${questions.length} (${percentage}%)</p>
+                        ${chartHTML}
+                        ${reviewButton}
                         <button onclick="window.location.href='/?action=reset'" class="btn-primary">Try Another Quiz</button>
                     </div>
                 `;
+
+                // Draw Pie Chart
+                setTimeout(() => {
+                    const pieCtx = document.getElementById('pieChart').getContext('2d');
+                    new Chart(pieCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Correct', 'Incorrect'],
+                            datasets: [{
+                                data: [score, questions.length - score],
+                                backgroundColor: ['#22c55e', '#ef4444'],
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+
                 return;
             }
 
@@ -364,5 +414,6 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
