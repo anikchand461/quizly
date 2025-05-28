@@ -36,8 +36,8 @@ class Question(BaseModel):
     correct_answer: str
 
 # --------------- Gemini API & parsing ---------------
-async def generate_mcqs(topics: List[str], num_questions: int):
-    prompt = f"""Generate {num_questions} multiple choice questions (MCQs) on the topics: {', '.join(topics)}.
+async def generate_mcqs(topics: List[str], num_questions: int, difficulty: str):
+    prompt = f"""Generate {num_questions} multiple choice questions (MCQs) on the topics: {', '.join(topics)} at {difficulty} difficulty level.
 Each question must have 4 options labeled a., b., c., d. and mention the correct answer clearly as 'Answer: <option letter>'.
 Format:
 Q1: <question>
@@ -70,7 +70,7 @@ def parse_questions(text: str):
         if answer_index is not None and 0 <= answer_index < len(options):
             correct_answer = options[answer_index]
             mcqs.append({
-                "text": question,  # Match template field name
+                "text": question,
                 "options": options,
                 "correct_answer": correct_answer
             })
@@ -86,7 +86,7 @@ def get_quiz_state(cookie: str = None):
     return {
         "questions": [],
         "correct_answers": [],
-        "user_answers": [],  # <-- Add this
+        "user_answers": [],
         "current_index": 0,
         "score": 0
     }
@@ -116,6 +116,7 @@ async def home(request: Request):
                 "score": 0,
                 "topics": "",
                 "num_questions": 5,
+                "difficulty": "Medium",
                 "error": None
             }
         )
@@ -131,14 +132,15 @@ async def home(request: Request):
             "score": quiz_state["score"],
             "topics": "",
             "num_questions": 5,
+            "difficulty": "Medium",
             "error": None
         }
     )
 
 @app.post("/", response_class=HTMLResponse)
-async def generate_quiz(request: Request, topics: str = Form(...), num_questions: int = Form(...)):
+async def generate_quiz(request: Request, topics: str = Form(...), num_questions: int = Form(...), difficulty: str = Form(...)):
     topic_list = [t.strip() for t in topics.split(",") if t.strip()]
-    if not topic_list or num_questions < 5 or num_questions > 100:
+    if not topic_list or num_questions < 5 or num_questions > 100 or difficulty not in ["Easy", "Medium", "Hard"]:
         return templates.TemplateResponse(
             "index.html",
             {
@@ -148,13 +150,13 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                 "score": 0,
                 "topics": topics,
                 "num_questions": num_questions,
-                "error": "Please provide valid topics and a number of questions between 5 and 100."
+                "difficulty": difficulty,
+                "error": "Please provide valid topics, a number of questions between 5 and 100, and a valid difficulty level."
             }
         )
 
     try:
-        # This is now async!
-        questions = await generate_mcqs(topic_list, num_questions)
+        questions = await generate_mcqs(topic_list, num_questions, difficulty)
         if not questions:
             return templates.TemplateResponse(
                 "index.html",
@@ -165,6 +167,7 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                     "score": 0,
                     "topics": topics,
                     "num_questions": num_questions,
+                    "difficulty": difficulty,
                     "error": "Failed to generate questions. Try again."
                 }
             )
@@ -185,6 +188,7 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                 "score": 0,
                 "topics": topics,
                 "num_questions": num_questions,
+                "difficulty": difficulty,
                 "error": None
             }
         )
@@ -201,6 +205,7 @@ async def generate_quiz(request: Request, topics: str = Form(...), num_questions
                 "score": 0,
                 "topics": topics,
                 "num_questions": num_questions,
+                "difficulty": difficulty,
                 "error": f"Error generating quiz: {str(e)}"
             }
         )
@@ -216,7 +221,6 @@ async def submit_answer(request: Request, answer: str = Form(...)):
     if is_correct:
         quiz_state["score"] += 1
 
-    # Store user's answer
     if "user_answers" not in quiz_state:
         quiz_state["user_answers"] = []
     quiz_state["user_answers"].append(answer)
@@ -232,7 +236,6 @@ async def submit_answer(request: Request, answer: str = Form(...)):
     set_quiz_state(response, quiz_state)
     return response
 
-# --- New route for reviewing a specific question ---
 @app.get("/review/{question_index}", response_class=HTMLResponse)
 async def review_question(request: Request, question_index: int):
     quiz_state = get_quiz_state(request.cookies.get("quiz_state"))
@@ -244,7 +247,6 @@ async def review_question(request: Request, question_index: int):
     user_answer = user_answers[question_index] if question_index < len(user_answers) else None
     correct_answer = question["correct_answer"]
 
-    # Generate reason (using Gemini or static logic)
     reason = await explain_answer(question["text"], question["options"], correct_answer, user_answer)
 
     return templates.TemplateResponse(
@@ -259,11 +261,9 @@ async def review_question(request: Request, question_index: int):
         }
     )
 
-# --- Function to generate explanation for answer ---
 async def explain_answer(question_text, options, correct_answer, user_answer):
     if user_answer == correct_answer:
         return "Your answer is correct. Well done!"
-    # Use Gemini to generate a reason for the correct answer
     prompt = f"""Question: {question_text}
 Options: {options}
 Correct Answer: {correct_answer}
@@ -305,14 +305,12 @@ Use the option text as the key.
             return response.text
         try:
             result = await asyncio.to_thread(sync_call)
-            # Try to parse the JSON from Gemini's response
             import json
             start = result.find('{')
             end = result.rfind('}') + 1
             json_str = result[start:end]
             return json.loads(json_str)
         except Exception:
-            # fallback: generic explanations
             return {opt: "No explanation available." for opt in question["options"]}
 
     async def gemini_question_explanation(question, user_answer):
@@ -330,7 +328,6 @@ Explain in 2-3 sentences why the correct answer is right and why the user's answ
         except Exception:
             return "Could not generate explanation at this time."
 
-    # Gather all explanations in parallel for speed
     option_expls = await asyncio.gather(*[gemini_option_explanations(q) for q in questions])
     question_expls = await asyncio.gather(*[
         gemini_question_explanation(q, user_answers[idx] if idx < len(user_answers) else None)
