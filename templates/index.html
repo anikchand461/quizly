@@ -344,7 +344,6 @@
                 e.preventDefault();
                 const selected = document.querySelector('input[name="answer"]:checked');
                 if (!selected) {
-                    showFeedback('Please select an answer!', false);
                     return;
                 }
 
@@ -359,16 +358,70 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        showFeedback(data.error, false);
                         return;
                     }
                     score = data.score;
                     currentIndex = data.current_index;
-                    showFeedback(data.is_correct ? 'Correct!' : `Incorrect. The correct answer is: ${data.correct_answer}`, data.is_correct);
-                    setTimeout(displayQuestion, 1500);
+
+                    // Highlight correct and selected answers
+                    const optionsDivs = document.querySelectorAll('.option');
+                    optionsDivs.forEach(div => {
+                        const input = div.querySelector('input[type="radio"]');
+                        const label = div.querySelector('label');
+                        input.disabled = true;
+
+                        if (input.value === data.correct_answer) {
+                            div.style.background = '#1a2e1a';
+                            label.style.color = '#22c55e';
+                            label.style.fontWeight = 'bold';
+                        }
+                        if (input.checked && input.value !== data.correct_answer) {
+                            div.style.background = '#2e1a1a';
+                            label.style.color = '#ef4444';
+                            label.style.fontWeight = 'bold';
+                        }
+                    });
+
+                    // Hide the Submit Answer button
+                    const submitBtn = document.querySelector('#answer-form button[type="submit"]');
+                    if (submitBtn) submitBtn.style.display = 'none';
+
+                    // Remove previous feedback/buttons if any
+                    const oldFeedback = document.getElementById('feedback-div');
+                    if (oldFeedback) oldFeedback.remove();
+
+                    // Show feedback and Next button
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.id = 'feedback-div';
+                    feedbackDiv.style.cssText = `
+                        margin-top: 1em;
+                        padding: 1em;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        text-align: center;
+                        background: ${userAnswer === data.correct_answer ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'};
+                        color: ${userAnswer === data.correct_answer ? '#22c55e' : '#ef4444'};
+                    `;
+                    feedbackDiv.textContent = userAnswer === data.correct_answer
+                        ? 'Correct!'
+                        : `Incorrect. The correct answer is: ${data.correct_answer}`;
+
+                    // Next button
+                    const nextBtn = document.createElement('button');
+                    nextBtn.type = 'button';
+                    nextBtn.className = 'btn-primary';
+                    nextBtn.style.margin = '1em 0.5em 0 0.5em';
+                    nextBtn.textContent = 'Next';
+                    nextBtn.onclick = function() {
+                        displayQuestion();
+                    };
+
+                    feedbackDiv.appendChild(document.createElement('br'));
+                    feedbackDiv.appendChild(nextBtn);
+
+                    document.getElementById('answer-form').appendChild(feedbackDiv);
                 })
                 .catch(error => {
-                    showFeedback('Error submitting answer. Please try again.', false);
                     console.error('Error:', error);
                 });
             });
