@@ -291,7 +291,6 @@
                 let chartHTML = `
                     <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5em;">
                         <canvas id="pieChart" width="180" height="180"></canvas>
-                        <div style="text-align:center; margin-top:0.5em; color:#aaa;">Correct vs Incorrect</div>
                     </div>
                 `;
 
@@ -305,7 +304,8 @@
                 resultDiv.innerHTML = `
                     <div class="result">
                         <h3>Quiz Completed!</h3>
-                        <p>Score: ${score} / ${questions.length} (${percentage}%)</p>
+                        <b><p>Score: ${score} / ${questions.length} (${percentage}%)</p></b>
+                        
                         ${chartHTML}
                         ${reviewButton}
                         <button onclick="window.location.href='/?action=reset'" class="btn-primary">Try Another Quiz</button>
@@ -322,8 +322,8 @@
                             datasets: [{
                                 data: [score, questions.length - score],
                                 backgroundColor: [
-                                    'rgba(34, 197, 94, 0.9)',    // green with opacity
-                                    'rgba(239, 68, 68, 0.9)'    // red with opacity
+                                    'rgba(34, 197, 94, 1.0)',    // green with opacity
+                                    'rgba(239, 68, 68, 1.0)'    // red with opacity
                                 ],
                                 borderWidth: 0 // Remove white border
                             }]
