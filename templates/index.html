@@ -182,6 +182,35 @@
             font-size: 1em;
             font-family: "Fira Mono", "Consolas", "Menlo", monospace;
         }
+        .result .btn-primary {
+            width: 220px;
+            display: block;
+            margin: 1em auto 0 auto;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 14px;
+        }
+        .btn-end-quiz {
+            width: 140px;
+            display: block;
+            margin: 2em auto 0 auto;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 10px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 0.8em 0;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+        }
+        .btn-end-quiz:hover,
+        .btn-end-quiz:focus {
+            background: #dc2626;
+            color: #fff;
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -264,6 +293,7 @@
         <div id="quiz-container" class="quiz-container" style="display: {% if questions %}block{% else %}none{% endif %};">
             <div id="quiz-content"></div>
             <div id="result"></div>
+            <button id="end-quiz-btn" class="btn-end-quiz">End Quiz</button>
         </div>
     </main>
 
@@ -293,6 +323,9 @@
 
             if (currentIndex >= questions.length) {
                 quizContent.innerHTML = '';
+                // Hide the End Quiz button when the report is shown
+                document.getElementById('end-quiz-btn').style.display = 'none';
+
                 const percentage = ((score / questions.length) * 100).toFixed(1);
 
                 let chartHTML = `
@@ -347,6 +380,9 @@
 
                 return;
             }
+
+            // Show the End Quiz button during the quiz
+            document.getElementById('end-quiz-btn').style.display = 'block';
 
             const q = questions[currentIndex];
             let html = `
@@ -448,6 +484,12 @@
                 });
             });
         }
+
+        document.getElementById('end-quiz-btn').addEventListener('click', function() {
+    // Set currentIndex to questions.length to trigger report
+    currentIndex = questions.length;
+    displayQuestion();
+});
 
         function showFeedback(message, isCorrect) {
             const feedback = document.createElement('div');
