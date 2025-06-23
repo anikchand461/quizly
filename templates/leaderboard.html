@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard | Quizly</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+    <style>
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.5rem 1rem;
+                position: relative;
+                background: #181028;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                width: auto;
+                flex: 1 1 auto;
+            }
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+                margin-right: 0.5em;
+            }
+            .logo span {
+                font-size: 1.35em;
+                font-weight: 700;
+                color: #fff;
+                letter-spacing: 0.01em;
+                line-height: 1;
+                margin-right: 0.5em;
+            }
+            .hamburger {
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 40px;
+                height: 40px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                margin-left: 0.5rem;
+                z-index: 102;
+            }
+            .hamburger span {
+                display: block;
+                height: 4px;
+                width: 28px;
+                margin: 3px 0;
+                background: #fff;
+                border-radius: 2px;
+                transition: 0.3s;
+                position: relative;
+            }
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg);
+            }
+            .nav {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100vw;
+                background: #181028;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 101;
+                box-shadow: 0 4px 16px rgba(139,92,246,0.08);
+                padding: 2rem 0 2rem 0;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                text-align: center;
+                opacity: 0;
+                pointer-events: none;
+                transform: translateY(-20px);
+                transition: opacity 0.3s, transform 0.3s;
+            }
+            .nav.open {
+                display: flex;
+                opacity: 1;
+                pointer-events: auto;
+                transform: translateY(0);
+            }
+            .nav .nav-link {
+                font-size: 1.25em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                margin-bottom: 0.3em;
+                display: block;
+            }
+            .nav .avatar-link img {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                border: 2px solid #8b5cf6;
+                background: #222;
+            }
+            .nav .nav-btn {
+                display: block;
+                width: 90%;
+                margin: 0.7em auto;
+                padding: 0.9em 0;
+                background: transparent;
+                color: #8b5cf6;
+                border: 1.5px solid #8b5cf6;
+                border-radius: 10px;
+                font-size: 1.15em;
+                font-weight: 600;
+                transition: background 0.2s, color 0.2s;
+                text-align: center;
+                text-decoration: none;
+            }
+            .nav .nav-btn:hover {
+                background: #8b5cf6;
+                color: #181028;
+            }
+            .actions {
+                display: none;
+                color: #a78bfa;
+            }
+        }
+        @media (min-width: 701px) {
+            .hamburger {
+                display: none;
+            }
+            .nav {
+                display: flex !important;
+                flex-direction: row;
+                align-items: center;
+                position: static;
+                background: none;
+                box-shadow: none;
+                padding: 0;
+                width: auto;
+                border-radius: 0;
+                text-align: left;
+                gap: 1.5em;
+            }
+            .nav .nav-link {
+                font-size: 1em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 600;
+                margin: 0 0.7em 0 0;
+                display: inline-block;
+            }
+            .nav .avatar-link {
+                display: inline-block;
+                margin: 0 0.2em;
+            }
+            .nav .avatar-link img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 2px solid #8b5cf6;
+                background: #222;
+                vertical-align: middle;
+            }
+            .nav .nav-btn {
+                display: none;
+            }
+        }
+        .option code {
+            background: #f3f4f6;
+            color: #181028;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+        }
+        </style>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/quiz" style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;">
+            <img src="/static/logo-3.png" alt="Quizly Logo" class="logo-icon">
+            <span style="color: #fff;">Quizly</span>
+            </a>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav class="nav" id="main-nav">
+            <a href="https://github.com/abhirajadhikary06/Quizly/blob/main/README.md" class="nav-link">Readme.md</a>
+            <a href="https://chat.whatsapp.com/JbALaLcvsHI1d5yo3k5D3N" class="nav-link">Join Us</a>
+            <a href="https://github.com/abhirajadhikary06" class="avatar-link">
+                <img src="/static/avatar1.png" alt="abhirajadhikary06">
+            </a>
+            <a href="https://github.com/anikchand461" class="avatar-link">
+                <img src="/static/avatar2.jpg" alt="anikchand461">
+            </a>
+            <a href="https://github.com/abhirajadhikary06/Quizly" class="nav-btn">GitHub</a>
+            <a href="https://open-launch.com/projects/Quizly" class="nav-btn">Open Launch</a>
+        </nav>
+        <!-- Add Logout button beside GitHub in the top right corner -->
+        <div class="actions">
+            <a href="https://github.com/abhirajadhikary06/Quizly" class="btn btn-outline" style="transition: color 0.2s; color: #8b5cf6;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: -0.125em; margin-right: 0.25rem;">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                GitHub
+            </a>
+            <a href="/logout" class="btn btn-logout" style="margin-left: 0.7em; background: #8b5cf6; color: #fff; border-radius: 10px; padding: 0.5em 1.2em; font-weight: 600; border: none; transition: background 0.2s;">Logout</a>
+        </div>
+    </header>
+    <div class="main-content">
+                <div class="hashtag">#LearnInPublic</div>
+        <h1 class="hero-title">Leaderboard</h1>
+        <p class="hero-description">
+            Be active on Quizly to top the Leaderboard. Happy Quizzing!
+        </p>
+        <div class="quiz-container">
+        <table style="width:100%; border-collapse:collapse; margin-top:2rem;">
+            <thead>
+                <tr style="background:rgba(229,53,171,0.08); color:#8b5cf6;">
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Rank</th>
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Username</th>
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Quiz Generations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="background:rgba(139,92,246,0.05); color:#fff;">
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ loop.index }}</td>
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.username }}</td>
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.generation_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</body>
+</html>

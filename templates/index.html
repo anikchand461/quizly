@@ -211,22 +211,36 @@
             background: #dc2626;
             color: #fff;
         }
+        .input-type-radio-group {
+            display: flex;
+            gap: 2em;
+            align-items: center;
+            margin-bottom: 0.5em;
+        }
+
+        .input-type-radio {
+            display: flex;
+            align-items: center;
+            font-size: 1.08em;
+            font-weight: 500;
+            cursor: pointer;
+            gap: 0.5em;
+        }
+
+        .input-type-radio input[type="radio"] {
+            accent-color: #8b5cf6;
+            width: 1.1em;
+            height: 1.1em;
+        }
     </style>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-3X3Y1QRD4P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-3X3Y1QRD4P');
-</script>
 <body>
     <header class="header">
         <div class="logo">
+            <a href="/quiz" style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;">
             <img src="/static/logo-3.png" alt="Quizly Logo" class="logo-icon">
-            <span>Quizly</span>
+            <span style="color: #fff;">Quizly</span>
+            </a>
         </div>
         <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
             <span></span>
@@ -234,7 +248,7 @@
             <span></span>
         </button>
         <nav class="nav" id="main-nav">
-            <a href="https://github.com/abhirajadhikary06/quizly/blob/main/README.md" class="nav-link">Readme.md</a>
+            <a href="https://github.com/abhirajadhikary06/Quizly/blob/main/README.md" class="nav-link">Readme.md</a>
             <a href="https://chat.whatsapp.com/JbALaLcvsHI1d5yo3k5D3N" class="nav-link">Join Us</a>
             <a href="https://github.com/abhirajadhikary06" class="avatar-link">
                 <img src="/static/avatar1.png" alt="abhirajadhikary06">
@@ -242,36 +256,53 @@
             <a href="https://github.com/anikchand461" class="avatar-link">
                 <img src="/static/avatar2.jpg" alt="anikchand461">
             </a>
-            <a href="https://github.com/abhirajadhikary06/quizly" class="nav-btn">GitHub</a>
-            <a href="https://open-launch.com/projects/quizly" class="nav-btn">Open Launch</a>
+            <a href="https://github.com/abhirajadhikary06/Quizly" class="nav-btn">GitHub</a>
+            <a href="https://open-launch.com/projects/Quizly" class="nav-btn">Open Launch</a>
         </nav>
+        <!-- Add Logout button beside GitHub in the top right corner -->
         <div class="actions">
-            <a href="https://github.com/abhirajadhikary06/quizly" class="btn btn-outline" style="transition: color 0.2s; color: #8b5cf6;">
+            <a href="https://github.com/abhirajadhikary06/Quizly" class="btn btn-outline" style="transition: color 0.2s; color: #8b5cf6;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: -0.125em; margin-right: 0.25rem;">
                     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
                 </svg>
                 GitHub
             </a>
-            <a href="https://www.producthunt.com/posts/quizly-ai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-quizly-ai" target="_blank" class="btn btn-outline" style="padding: 0; border: none;">
-                <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=969914&theme=light&t=1748237803551"
-                    alt="Quizly.ai - Your personal quiz generator, anytime!! | Product Hunt"
-                    style="height: 40px; width: auto; vertical-align: middle;" />
-            </a>
+            <a href="/logout" class="btn btn-logout" style="margin-left: 0.7em; background: #8b5cf6; color: #fff; border-radius: 10px; padding: 0.5em 1.2em; font-weight: 600; border: none; transition: background 0.2s;">Logout</a>
         </div>
     </header>
 
     <main class="main-content">
+        <div style="color: #fff; font-size: 1.1em; font-weight: 600; margin-bottom: 0.5em;">
+            #Welcome <a href="/profile" style="color:#8b5cf6; text-decoration:none;">{{ username }}</a>
+        </div>
         <div class="hashtag">#LearnInPublic</div>
         <h1 class="hero-title">MCQ Quiz Platform</h1>
         <p class="hero-description">
-            Test your knowledge with personalized quizzes on any topic. Generate custom MCQ questions and track your progress in real-time.
+            Your AI-Powered Quiz Buddy! Create personalized quizzes on any topic, master every answer, and track your progress with smart insights.
         </p>
 
         <div id="quiz-form" class="form-container" style="display: {% if not questions %}block{% else %}none{% endif %};">
-            <form method="post" action="/">
+            <form method="post" action="/quiz" enctype="multipart/form-data">
                 <div class="form-group">
+                    <label style="margin-bottom:0.5em; display:block;">Choose Input Type:</label>
+                    <div class="input-type-btn-group" style="display: flex; gap: 1em;">
+                        <button type="button" id="btn-text" class="input-type-btn active" style="padding: 0.5em 1.2em; border-radius: 20px; border: none; background: #8b5cf6; color: #fff; font-weight: 600; cursor: pointer;">Enter Topics</button>
+                        <button type="button" id="btn-pdf" class="input-type-btn" style="padding: 0.5em 1.2em; border-radius: 20px; border: none; background: #2d223f; color: #fff; font-weight: 600; cursor: pointer;">Upload PDF</button>
+                        <button type="button" id="btn-image" class="input-type-btn" style="padding: 0.5em 1.2em; border-radius: 20px; border: none; background: #2d223f; color: #fff; font-weight: 600; cursor: pointer;">Upload Image</button>
+                    </div>
+                    <input type="hidden" name="input_type" id="input_type" value="text">
+                </div>
+                <div class="form-group" id="text-input-group">
                     <label for="topics">Enter Topics (comma-separated):</label>
-                    <input type="text" id="topics" name="topics" class="form-input" placeholder="e.g., Python, Machine Learning, JavaScript" value="{{ topics }}" required>
+                    <input type="text" id="topics" name="topics" class="form-input" placeholder="e.g., Python, Machine Learning, JavaScript" value="{{ topics }}">
+                </div>
+                <div class="form-group" id="pdf-input-group" style="display:none;">
+                    <label for="pdf_file">Upload PDF:</label>
+                    <input type="file" id="pdf_file" name="pdf_file" class="form-input" accept="application/pdf">
+                </div>
+                <div class="form-group" id="image-input-group" style="display:none;">
+                    <label for="image_file">Upload Image:</label>
+                    <input type="file" id="image_file" name="image_file" class="form-input" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label for="num_questions">Number of Questions (5-100):</label>
@@ -297,6 +328,54 @@
         </div>
     </main>
 
+    <!-- Leaderboard Floating Button -->
+<style>
+    .leaderboard-fab {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        width: 60px;
+        height: 60px;
+        background: #8b5cf6;
+        border-radius: 18px;
+        box-shadow: 0 4px 16px rgba(24, 16, 40, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        border: none;
+        cursor: pointer;
+        transition: box-shadow 0.2s, background 0.2s;
+    }
+    .leaderboard-fab:hover {
+        background: #8b5cf6;
+        box-shadow: 0 8px 24px rgba(229, 53, 171, 0.18);
+    }
+    .leaderboard-fab svg {
+        width: 32px;
+        height: 32px;
+        display: block;
+        color: #181028;
+    }
+    @media (max-width: 700px) {
+        .leaderboard-fab {
+            bottom: 18px;
+            right: 18px;
+            width: 48px;
+            height: 48px;
+        }
+        .leaderboard-fab svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+</style>
+<!-- Font Awesome CDN for the leaderboard icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<a href="/leaderboard" class="leaderboard-fab" title="Leaderboard">
+    <i class="fa-solid fa-ranking-star" style="font-size: 2em; color: #181028;"></i>
+</a>
     <script>
         const questions = {{ questions | tojson | safe }};
         let currentIndex = {{ current_index }};
@@ -348,7 +427,7 @@
                         
                         ${chartHTML}
                         ${reviewButton}
-                        <button onclick="window.location.href='/?action=reset'" class="btn-primary">Try Another Quiz</button>
+                        <button onclick="window.location.href='/quiz?action=reset'" class="btn-primary">Try Another Quiz</button>
                     </div>
                 `;
 
@@ -548,5 +627,67 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Button-based input type selection
+    const btnText = document.getElementById('btn-text');
+    const btnPdf = document.getElementById('btn-pdf');
+    const btnImage = document.getElementById('btn-image');
+    const inputType = document.getElementById('input_type');
+    const textGroup = document.getElementById('text-input-group');
+    const pdfGroup = document.getElementById('pdf-input-group');
+    const imageGroup = document.getElementById('image-input-group');
+
+    function setActive(type) {
+        if (type === 'text') {
+            btnText.classList.add('active');
+            btnText.style.background = '#8b5cf6';
+            btnPdf.classList.remove('active');
+            btnPdf.style.background = '#2d223f';
+            btnImage.classList.remove('active');
+            btnImage.style.background = '#2d223f';
+            inputType.value = 'text';
+            textGroup.style.display = '';
+            pdfGroup.style.display = 'none';
+            imageGroup.style.display = 'none';
+        } else if (type === 'pdf') {
+            btnPdf.classList.add('active');
+            btnPdf.style.background = '#8b5cf6';
+            btnText.classList.remove('active');
+            btnText.style.background = '#2d223f';
+            btnImage.classList.remove('active');
+            btnImage.style.background = '#2d223f';
+            inputType.value = 'pdf';
+            textGroup.style.display = 'none';
+            pdfGroup.style.display = '';
+            imageGroup.style.display = 'none';
+        } else if (type === 'image') {
+            btnImage.classList.add('active');
+            btnImage.style.background = '#8b5cf6';
+            btnText.classList.remove('active');
+            btnText.style.background = '#2d223f';
+            btnPdf.classList.remove('active');
+            btnPdf.style.background = '#2d223f';
+            inputType.value = 'image';
+            textGroup.style.display = 'none';
+            pdfGroup.style.display = 'none';
+            imageGroup.style.display = '';
+        }
+    }
+
+    btnText.addEventListener('click', function() {
+        setActive('text');
+    });
+    btnPdf.addEventListener('click', function() {
+        setActive('pdf');
+    });
+    btnImage.addEventListener('click', function() {
+        setActive('image');
+    });
+
+    // Set initial state
+    setActive(inputType.value || 'text');
+});
+</script>
 </body>
 </html>
