@@ -182,7 +182,24 @@
             font-size: 1em;
             font-family: "Fira Mono", "Consolas", "Menlo", monospace;
         }
-        </style>
+        @media (max-width: 700px) {
+        .quiz-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        table {
+            min-width: 600px;
+            width: 100%;
+        }
+        .main-content {
+            width: 100%;
+            padding: 1em 0.5em;
+            box-sizing: border-box;
+        }
+    }
+    </style>
 <body>
     <header class="header">
         <div class="logo">
@@ -206,7 +223,8 @@
                 <img src="/static/avatar2.jpg" alt="anikchand461">
             </a>
             <a href="https://github.com/abhirajadhikary06/Quizly" class="nav-btn">GitHub</a>
-            <a href="https://open-launch.com/projects/Quizly" class="nav-btn">Open Launch</a>
+            <!-- Show Logout instead of Open Launch on mobile -->
+            <a href="/logout" class="nav-btn" style="background:#8b5cf6; color:#fff;">Logout</a>
         </nav>
         <!-- Add Logout button beside GitHub in the top right corner -->
         <div class="actions">
@@ -226,32 +244,57 @@
             See all your previous searches on Quizly. This page shows the topics you have searched for, the input types you used, the number of questions generated, and their difficulty levels.
         </p>
         <div class="quiz-container">
-
-            {% if quiz_requests %}
-                <table style="width:100%; border-collapse:collapse; margin-bottom:2rem;">
-                    <thead>
-                        <tr style="background:rgba(229,53,171,0.08); color:#8b5cf6;">
-                            <th style="padding:0.75rem; border-bottom:1px solid #374151;">Topic</th>
-                            <th style="padding:0.75rem; border-bottom:1px solid #374151;">Input Type</th>
-                            <th style="padding:0.75rem; border-bottom:1px solid #374151;">Questions</th>
-                            <th style="padding:0.75rem; border-bottom:1px solid #374151;">Difficulty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in quiz_requests %}
-                        <tr style="background:rgba(139,92,246,0.05); color:#fff;">
-                            <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.topic }}</td>
-                            <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.input_type }}</td>
-                            <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.num_questions }}</td>
-                            <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.difficulty }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <div class="error">No quiz requests found.</div>
-            {% endif %}
-        </div>
+    {% if quiz_requests %}
+        <table>
+            <thead>
+                <tr style="background:rgba(229,53,171,0.08); color:#8b5cf6;">
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Topic</th>
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Input Type</th>
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Questions</th>
+                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Difficulty</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in quiz_requests %}
+                <tr style="background:rgba(139,92,246,0.05); color:#fff;">
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.topic }}</td>
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.input_type }}</td>
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.num_questions }}</td>
+                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ req.difficulty }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="error">No quiz requests found.</div>
+    {% endif %}
+</div>
     </div>
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.getElementById('hamburger-btn');
+    const nav = document.getElementById('main-nav');
+
+    hamburger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        nav.classList.toggle('open');
+        hamburger.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
+            nav.classList.remove('open');
+            hamburger.classList.remove('active');
+        }
+    });
+
+    document.querySelectorAll('.nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            nav.classList.remove('open');
+            hamburger.classList.remove('active');
+        });
+    });
+});
+</script>
 </html>

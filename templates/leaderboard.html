@@ -131,6 +131,21 @@
                 display: none;
                 color: #a78bfa;
             }
+            .quiz-container {
+                width: 100%;
+                overflow-x: auto;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            table {
+                min-width: 600px;
+                width: 100%;
+            }
+            .main-content {
+                width: 100%;
+                padding: 1em 0.5em;
+                box-sizing: border-box;
+            }
         }
         @media (min-width: 701px) {
             .hamburger {
@@ -205,7 +220,8 @@
                 <img src="/static/avatar2.jpg" alt="anikchand461">
             </a>
             <a href="https://github.com/abhirajadhikary06/Quizly" class="nav-btn">GitHub</a>
-            <a href="https://open-launch.com/projects/Quizly" class="nav-btn">Open Launch</a>
+            <!-- Show Logout instead of Open Launch on mobile -->
+            <a href="/logout" class="nav-btn" style="background:#8b5cf6; color:#fff;">Logout</a>
         </nav>
         <!-- Add Logout button beside GitHub in the top right corner -->
         <div class="actions">
@@ -225,25 +241,51 @@
             Be active on Quizly to top the Leaderboard. Happy Quizzing!
         </p>
         <div class="quiz-container">
-        <table style="width:100%; border-collapse:collapse; margin-top:2rem;">
-            <thead>
-                <tr style="background:rgba(229,53,171,0.08); color:#8b5cf6;">
-                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Rank</th>
-                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Username</th>
-                    <th style="padding:0.75rem; border-bottom:1px solid #374151;">Quiz Generations</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr style="background:rgba(139,92,246,0.05); color:#fff;">
-                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ loop.index }}</td>
-                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.username }}</td>
-                    <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.generation_count }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <table style="width:100%; border-collapse:collapse; margin-top:2rem;">
+                <thead>
+                    <tr style="background:rgba(229,53,171,0.08); color:#8b5cf6;">
+                        <th style="padding:0.75rem; border-bottom:1px solid #374151;">Rank</th>
+                        <th style="padding:0.75rem; border-bottom:1px solid #374151;">Username</th>
+                        <th style="padding:0.75rem; border-bottom:1px solid #374151;">Quiz Generations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr style="background:rgba(139,92,246,0.05); color:#fff;">
+                        <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ loop.index }}</td>
+                        <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.username }}</td>
+                        <td style="padding:0.75rem; border-bottom:1px solid #232323;">{{ user.generation_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.getElementById('hamburger-btn');
+    const nav = document.getElementById('main-nav');
+
+    hamburger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        nav.classList.toggle('open');
+        hamburger.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
+            nav.classList.remove('open');
+            hamburger.classList.remove('active');
+        }
+    });
+
+    document.querySelectorAll('.nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            nav.classList.remove('open');
+            hamburger.classList.remove('active');
+        });
+    });
+});
+</script>
 </html>
