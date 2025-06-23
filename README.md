@@ -1,92 +1,58 @@
-# 🎓 Quizly - AI Powered Quiz Generator
+Quizly - AI-Powered Quiz Generation Application
 
-**Quizly** is a smart quiz application that uses **Google Gemini** (via the Generative AI API) to generate multiple choice questions based on user-defined topics. It's built with a **FastAPI backend** and a simple **HTML/CSS/JavaScript frontend**.
+Quizly is a state-of-the-art quiz generation application that utilizes the Google Gemini Generative AI API to create sophisticated, context-aware multiple-choice questions based on user-specified topics. Developed with a robust FastAPI backend and a clean, responsive HTML/CSS/JavaScript frontend, Quizly delivers a seamless user experience for learners and educators alike.
 
----
+Features
+	•	AI-driven generation of dynamic, multiple-choice questions across a wide range of topics
+	•	Provides instant feedback and assessment for questions
+	•	Integrates with the Google Gemini API for advanced, context-rich question generation
+	•	User-friendly, clean, and minimalist interface
 
-## 🚀 Features
+Tech Stack
 
-* Generate quizzes dynamically from any topic
-* Multiple-choice questions with instant feedback
-* AI-powered using Gemini (Google Generative AI)
-* Clean, minimal UI for a smooth quiz-taking experience
+Layer	Technology
+Backend	FastAPI
+Frontend	HTML, CSS, JavaScript
+AI Model	Google Gemini via API
 
----
+Installation
+	1.	Clone the Repository:
 
-## 🛠️ Tech Stack
+git clone https://github.com/your-username/Quizly.git
+cd Quizly
 
-| Layer        | Technology            |
-| ------------ | --------------------- |
-| **Backend**  | FastAPI               |
-| **Frontend** | HTML, CSS, JavaScript |
-| **AI Model** | Google Gemini via API |
 
----
+	2.	Install Dependencies:
 
-## 📦 Installation
-
-1. **Clone the repository**:
-
-```bash
-git clone https://github.com/your-username/quizly.git
-cd quizly
-```
-
-2. **Install dependencies**:
-
-```bash
 pip install -r requirements.txt
-```
 
-3. **Set up `.env` file**:
 
-```
+	3.	Setup Environment Variables:
+Create a .env file with your Gemini API key:
+
 GENAI_API_KEY=your_google_gemini_api_key
-```
 
-4. **Run the application locally**:
 
-```bash
+	4.	Run the Application Locally:
+
 uvicorn main:app --reload
-```
 
----
 
-## 🌐 Deployment
 
-This app can be deployed on platforms like **Render**, **Railway**, or **Vercel**.
+Deployment
+	•	Render: Set the start command as unicorn main:app --reload.
+	•	Railway: Configure the app and obtain the deployment URL from the Railway dashboard.
 
-* For **Render**: Set the start command as:
+Usage
+	1.	Open the app in a browser.
+	2.	Enter desired topics (comma-separated).
+	3.	Choose the number of questions.
+	4.	Click “Generate Quiz” to begin.
 
-```
-unicorn main:app --reload
-```
+Contributing
 
-* For **Railway**: Visit your project dashboard, find the `https://...railway.app` URL for your deployed app.
+We welcome contributions. To propose changes or enhancements, open an issue for discussion first. All PRs must adhere to project coding and documentation standards.
 
----
+License
 
-## 🧪 Usage
-
-1. Open the app in a browser.
-2. Enter your topics (comma-separated).
-3. Select the number of questions.
-4. Click **Generate Quiz** and start answering!
-
----
-
-## 🙌 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## 📄 License
-
-[MIT](LICENSE)
-
----
-
-## 📬 Contact
-
-Made with ❤️ by [Abhiraj Adhikary](https://github.com/abhirajadhikary06) and [Anik Chand](https://github.com/anikchand461)
+Distributed under the MIT License.

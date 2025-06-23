@@ -15,6 +15,7 @@ body {
     overflow-x: hidden;
 }
 
+
 /* Header */
 .header {
     display: flex;
@@ -171,7 +172,7 @@ body {
 .btn-primary {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    background: linear-gradient(135deg, #8b5cf6, #e686c6);
     color: white;
     border: none;
     border-radius: 12px;
