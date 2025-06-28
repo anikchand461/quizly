@@ -256,6 +256,9 @@
             }
         }
         @media (max-width: 700px) {
+            .header {
+                margin-top: 2.7rem;
+            }
             .main-content {
                 padding: 0 0.3em;
             }
@@ -290,9 +293,67 @@
                 font-size: 0.98em;
             }
         }
+        /* Top Alert */
+        .top-alert {
+            width: 100vw;
+            background:rgb(242, 255, 0);
+            color:rgb(0, 0, 0);
+            font-weight: 600;
+            font-size: 0.8em;
+            padding: 0.5em 0.5em 0.5em 1.2em;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            border-bottom: 1px rgb(242, 255, 0);
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            overflow: hidden;
+        }
+        .top-alert .brace {
+            font-size: 0.8em;
+            font-weight: 900;
+            color:rgb(242, 255, 0);
+            margin-right: 0.4em;
+        }
+        .alert-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll-left 18s linear infinite;
+            min-width: 100%;
+        }
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        @media (max-width: 700px) {
+            .top-alert {
+                font-size: 0.8em;
+                padding: 0.5em 0.2em 0.5em 0.7em;
+            }
+            .top-alert .brace {
+                font-size: 0.8em;
+            }
+        }
+        @media (min-width: 701px) {
+            .header {
+                margin-top: 2.7em;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="top-alert">
+        <span class="brace">&#123;</span>
+        <span class="alert-marquee">
+            Currently we are using <strong>free version of Render</strong> which goes to sleep after some inactivity, so kindly cooperate by creating new signups every time. We will fix this issue shortly, thank you for your coordination.
+        </span>
+    </div>
     <header class="header">
         <div class="logo">
             <img src="/static/logo-3.png" alt="Logo" class="logo-icon">
